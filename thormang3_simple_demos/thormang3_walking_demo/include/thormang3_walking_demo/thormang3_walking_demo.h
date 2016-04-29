@@ -15,7 +15,7 @@
 
 #include <std_msgs/String.h>
 
-#include "robotis_controller_msgs/JointCtrlModule.h"
+#include "robotis_controller_msgs/StatusMsg.h"
 #include "thormang3_walking_module_msgs/RobotPose.h"
 #include "thormang3_walking_module_msgs/GetReferenceStepData.h"
 #include "thormang3_walking_module_msgs/AddStepDataArray.h"
