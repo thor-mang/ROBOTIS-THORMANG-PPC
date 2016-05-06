@@ -11,12 +11,10 @@
 
 
 ros::Publisher		wholebody_ini_pose_pub;
-ros::Publisher		set_control_mode_msg_pub;
+ros::Publisher		enable_ctrl_module_pub;
 
-ros::ServiceClient	remove_exisitng_step_data_client;
 ros::ServiceClient	get_ref_step_data_client;
 ros::ServiceClient	add_step_data_array_client;
-ros::ServiceClient	walking_start_client;
 ros::ServiceClient	is_running_client;
 
 ros::ServiceClient	set_balance_param_client;
@@ -30,9 +28,9 @@ double step_length		= 0.1; //meter
 double body_z_swap		= 0.01; //meter
 double foot_z_swap		= 0.1; //meter
 
-void WalkingModuleStatusMSGCallback(const std_msgs::String::ConstPtr& msg)
+void WalkingModuleStatusMSGCallback(const robotis_controller_msgs::StatusMsg::ConstPtr &msg)
 {
-	ROS_INFO_STREAM("[Robot] : " << msg->data);
+	ROS_INFO_STREAM("[" << msg->module_name <<"] : " << msg->status_msg);
 }
 
 
@@ -41,20 +39,15 @@ void Initialize()
 	ros::NodeHandle _nh;
 
 	wholebody_ini_pose_pub		= _nh.advertise<std_msgs::String>("/robotis/base/ini_pose", 0);
-	set_control_mode_msg_pub	= _nh.advertise<robotis_controller_msgs::JointCtrlModule>("/robotis/set_ctrl_module", 0);
+	enable_ctrl_module_pub 		= _nh.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 0);
 
-	//remove_exisitng_step_data_client	= _nh.serviceClient<thormang3_walking_module_msgs::RemoveExistingStepData>("/robotis/walking/remove_existing_step_data");
-	get_ref_step_data_client			= _nh.serviceClient<thormang3_walking_module_msgs::GetReferenceStepData>("/robotis/walking/get_reference_step_data");
-	add_step_data_array_client			= _nh.serviceClient<thormang3_walking_module_msgs::AddStepDataArray>("/robotis/walking/add_step_data");
-	//walking_start_client				= _nh.serviceClient<thormang3_walking_module_msgs::WalkingStart>("/robotis/walking/walking_start");
-	//is_running_client					= _nh.serviceClient<thormang3_walking_module_msgs::IsRunning>("/robotis/walking/is_running");
-	set_balance_param_client	 		= _nh.serviceClient<thormang3_walking_module_msgs::SetBalanceParam>("/robotis/walking/set_balance_param");
+	get_ref_step_data_client	= _nh.serviceClient<thormang3_walking_module_msgs::GetReferenceStepData>("/robotis/walking/get_reference_step_data");
+	add_step_data_array_client	= _nh.serviceClient<thormang3_walking_module_msgs::AddStepDataArray>("/robotis/walking/add_step_data");
+	set_balance_param_client	= _nh.serviceClient<thormang3_walking_module_msgs::SetBalanceParam>("/robotis/walking/set_balance_param");
 
-	walking_module_status_msg_sub	= _nh.subscribe("/robotis/walking/status_message", 10, WalkingModuleStatusMSGCallback);
+	walking_module_status_msg_sub	= _nh.subscribe("/robotis/status", 10, WalkingModuleStatusMSGCallback);
 
 }
-
-
 
 
 void MoveToInitPose()
@@ -67,35 +60,9 @@ void MoveToInitPose()
 
 void SetCtrlModule()
 {
-    robotis_controller_msgs::JointCtrlModule _set_module_msg;
-
-    _set_module_msg.joint_name.push_back("r_leg_hip_y");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("r_leg_hip_r");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("r_leg_hip_p");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("r_leg_kn_p");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("r_leg_an_p");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("r_leg_an_r");
-    _set_module_msg.module_name.push_back("walking_module");
-
-    _set_module_msg.joint_name.push_back("l_leg_hip_y");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("l_leg_hip_r");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("l_leg_hip_p");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("l_leg_kn_p");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("l_leg_an_p");
-    _set_module_msg.module_name.push_back("walking_module");
-    _set_module_msg.joint_name.push_back("l_leg_an_r");
-    _set_module_msg.module_name.push_back("walking_module");
-
-    set_control_mode_msg_pub.publish( _set_module_msg );
+    std_msgs::String _demo_msg;
+    _demo_msg.data = "walking_module";
+    enable_ctrl_module_pub.publish( _demo_msg );
 }
 
 bool LoadBalanceParam(thormang3_walking_module_msgs::SetBalanceParam& _set_param)
@@ -160,33 +127,10 @@ void BalanceOn()
 {
 	thormang3_walking_module_msgs::SetBalanceParam _set_balance_param_srv;
 	_set_balance_param_srv.request.updating_duration							 =  2.0*1.0; //sec
-//	_set_balance_param_srv.request.balance_param.gyro_gain 						 =  1.0*1.0;
-//	_set_balance_param_srv.request.balance_param.foot_roll_angle_gain            = -1.0*1.0;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_angle_gain           = -1.0*1.0;
-//
-//	_set_balance_param_srv.request.balance_param.foot_x_force_gain               = 0.125*1.0;
-//	_set_balance_param_srv.request.balance_param.foot_y_force_gain               = 0.125*1.0;
-//	_set_balance_param_srv.request.balance_param.foot_z_force_gain               = -0.025*1.0;
-//	_set_balance_param_srv.request.balance_param.foot_roll_torque_gain           = 0.002*1.0;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_torque_gain          = 0.002*1.0;
-//
-//
-//	_set_balance_param_srv.request.balance_param.foot_roll_angle_time_constant	= 0.2;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_angle_time_constant	= 0.2;
-//
-//	_set_balance_param_srv.request.balance_param.foot_x_force_time_constant      = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_y_force_time_constant      = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_z_force_time_constant      = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_roll_torque_time_constant  = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_torque_time_constant = 0.1;
-//
-//	_set_balance_param_srv.request.balance_param.hip_roll_swap_angle_rad = 1.0*M_PI/180.0;
-//
-//	_set_balance_param_srv.request.balance_param.cob_x_offset_m			 = -30.0*0.001;
-//	_set_balance_param_srv.request.balance_param.cob_y_offset_m			 =   0.0*0.001;
 
 	if(LoadBalanceParam(_set_balance_param_srv) == false)
 	{
+		ROS_ERROR("[Demo]  : Failed to Load Balance YAML");
 		return;
 	}
 
@@ -213,33 +157,10 @@ void BalanceOff()
 {
 	thormang3_walking_module_msgs::SetBalanceParam _set_balance_param_srv;
 	_set_balance_param_srv.request.updating_duration							 = 1.0; //sec
-//	_set_balance_param_srv.request.balance_param.gyro_gain 						 = 0.0;
-//	_set_balance_param_srv.request.balance_param.foot_roll_angle_gain            = 0.0;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_angle_gain           = 0.0;
-//
-//	_set_balance_param_srv.request.balance_param.foot_x_force_gain               = 0.0;
-//	_set_balance_param_srv.request.balance_param.foot_y_force_gain               = 0.0;
-//	_set_balance_param_srv.request.balance_param.foot_z_force_gain               = 0.0;
-//	_set_balance_param_srv.request.balance_param.foot_roll_torque_gain           = 0.0;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_torque_gain          = 0.0;
-//
-//
-//	_set_balance_param_srv.request.balance_param.foot_roll_angle_time_constant	= 0.2;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_angle_time_constant	= 0.2;
-//
-//	_set_balance_param_srv.request.balance_param.foot_x_force_time_constant      = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_y_force_time_constant      = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_z_force_time_constant      = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_roll_torque_time_constant  = 0.1;
-//	_set_balance_param_srv.request.balance_param.foot_pitch_torque_time_constant = 0.1;
-//
-//	_set_balance_param_srv.request.balance_param.hip_roll_swap_angle_rad = 0.0*M_PI/180.0;
-//
-//	_set_balance_param_srv.request.balance_param.cob_x_offset_m			 = 30.0*0.001;
-//	_set_balance_param_srv.request.balance_param.cob_y_offset_m			 =  0.0*0.001;
 
 	if(LoadBalanceParam(_set_balance_param_srv) == false)
 	{
+		ROS_ERROR("[Demo]  : Failed to Load Balance YAML");
 		return;
 	}
 
