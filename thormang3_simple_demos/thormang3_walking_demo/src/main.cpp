@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	Initialize();
 
 	ros::NodeHandle _nh;
-	demo_command_sub = _nh.subscribe("/robotis/walking_demo/command", 10, DemoCommandCallback);
+	demo_command_sub = _nh.subscribe("robotis/walking_demo/command", 10, DemoCommandCallback);
 
 	ros::spin();
 	return 0;

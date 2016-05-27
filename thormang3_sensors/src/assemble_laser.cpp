@@ -75,9 +75,9 @@ int main(int argc, char** argv)
     ros::NodeHandle _nh;
 
     // Add your ros communications here.
-    lidar_turn_end_sub = _nh.subscribe("/robotis/sensor/move_lidar", 1, &lidarTurnCallBack);
-    pointCloud2_pub = _nh.advertise<sensor_msgs::PointCloud2>("/robotis/sensor/assembled_scan", 0);
-    assemble_chest_laser_Client = _nh.serviceClient<laser_assembler::AssembleScans2>("/robotis/sensor/service/assemble_scans2");
+    lidar_turn_end_sub = _nh.subscribe("robotis/sensor/move_lidar", 1, &lidarTurnCallBack);
+    pointCloud2_pub = _nh.advertise<sensor_msgs::PointCloud2>("robotis/sensor/assembled_scan", 0);
+    assemble_chest_laser_Client = _nh.serviceClient<laser_assembler::AssembleScans2>("robotis/sensor/service/assemble_scans2");
 
     lidar_move_start_time = ros::Time::now();
 

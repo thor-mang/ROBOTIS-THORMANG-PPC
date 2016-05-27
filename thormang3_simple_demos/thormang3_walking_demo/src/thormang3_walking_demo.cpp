@@ -38,14 +38,14 @@ void Initialize()
 {
 	ros::NodeHandle _nh;
 
-	wholebody_ini_pose_pub		= _nh.advertise<std_msgs::String>("/robotis/base/ini_pose", 0);
-	enable_ctrl_module_pub 		= _nh.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 0);
+	wholebody_ini_pose_pub		= _nh.advertise<std_msgs::String>("robotis/base/ini_pose", 0);
+	enable_ctrl_module_pub 		= _nh.advertise<std_msgs::String>("robotis/enable_ctrl_module", 0);
 
-	get_ref_step_data_client	= _nh.serviceClient<thormang3_walking_module_msgs::GetReferenceStepData>("/robotis/walking/get_reference_step_data");
-	add_step_data_array_client	= _nh.serviceClient<thormang3_walking_module_msgs::AddStepDataArray>("/robotis/walking/add_step_data");
-	set_balance_param_client	= _nh.serviceClient<thormang3_walking_module_msgs::SetBalanceParam>("/robotis/walking/set_balance_param");
+	get_ref_step_data_client	= _nh.serviceClient<thormang3_walking_module_msgs::GetReferenceStepData>("robotis/walking/get_reference_step_data");
+	add_step_data_array_client	= _nh.serviceClient<thormang3_walking_module_msgs::AddStepDataArray>("robotis/walking/add_step_data");
+	set_balance_param_client	= _nh.serviceClient<thormang3_walking_module_msgs::SetBalanceParam>("robotis/walking/set_balance_param");
 
-	walking_module_status_msg_sub	= _nh.subscribe("/robotis/status", 10, WalkingModuleStatusMSGCallback);
+	walking_module_status_msg_sub	= _nh.subscribe("robotis/status", 10, WalkingModuleStatusMSGCallback);
 
 }
 
