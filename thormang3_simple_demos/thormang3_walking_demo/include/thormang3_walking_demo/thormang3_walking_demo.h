@@ -25,7 +25,7 @@
 #include "thormang3_walking_module_msgs/RemoveExistingStepData.h"
 
 
-#include "WalkingModuleCommon.h"
+#include "walking_module_common.h"
 
 
 
