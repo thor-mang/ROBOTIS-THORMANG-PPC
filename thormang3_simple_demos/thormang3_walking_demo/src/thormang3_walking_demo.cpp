@@ -43,7 +43,6 @@ ros::Publisher      enable_ctrl_module_pub;
 ros::ServiceClient  get_ref_step_data_client;
 ros::ServiceClient  add_step_data_array_client;
 ros::ServiceClient  is_running_client;
-
 ros::ServiceClient  set_balance_param_client;
 
 ros::Subscriber     walking_module_status_msg_sub;
@@ -71,6 +70,7 @@ void initialize()
   get_ref_step_data_client      = nh.serviceClient<thormang3_walking_module_msgs::GetReferenceStepData>("/robotis/walking/get_reference_step_data");
   add_step_data_array_client    = nh.serviceClient<thormang3_walking_module_msgs::AddStepDataArray>("/robotis/walking/add_step_data");
   set_balance_param_client      = nh.serviceClient<thormang3_walking_module_msgs::SetBalanceParam>("/robotis/walking/set_balance_param");
+  is_running_client             = nh.serviceClient<thormang3_walking_module_msgs::IsRunning>("/robotis/walking/is_running");
 
   walking_module_status_msg_sub = nh.subscribe("/robotis/status", 10, walkingModuleStatusMSGCallback);
 }
@@ -165,15 +165,16 @@ void balanceOn()
 
   if(set_balance_param_client.call(set_balance_param_srv) == true)
   {
-    int _result = set_balance_param_srv.response.result;
-    if( _result == thormang3_walking_module_msgs::SetBalanceParam::Response::NO_ERROR)
+    int set_balance_param_srv_result = set_balance_param_srv.response.result;
+    if( set_balance_param_srv_result == thormang3_walking_module_msgs::SetBalanceParam::Response::NO_ERROR)
       ROS_INFO("[Demo]  : Succeed to set balance param");
-    else {
-      if(_result & thormang3_walking_module_msgs::SetBalanceParam::Response::NOT_ENABLED_WALKING_MODULE)
+    else
+    {
+      if(set_balance_param_srv_result & thormang3_walking_module_msgs::SetBalanceParam::Response::NOT_ENABLED_WALKING_MODULE)
         ROS_ERROR("[Demo]  : BALANCE_PARAM_ERR::NOT_ENABLED_WALKING_MODULE");
-      if(_result & thormang3_walking_module_msgs::SetBalanceParam::Response::PREV_REQUEST_IS_NOT_FINISHED)
+      if(set_balance_param_srv_result & thormang3_walking_module_msgs::SetBalanceParam::Response::PREV_REQUEST_IS_NOT_FINISHED)
         ROS_ERROR("[Demo]  : BALANCE_PARAM_ERR::PREV_REQUEST_IS_NOT_FINISHED");
-      if(_result & thormang3_walking_module_msgs::SetBalanceParam::Response::TIME_CONST_IS_ZERO_OR_NEGATIVE)
+      if(set_balance_param_srv_result & thormang3_walking_module_msgs::SetBalanceParam::Response::TIME_CONST_IS_ZERO_OR_NEGATIVE)
         ROS_ERROR("[Demo]  : BALANCE_PARAM_ERR::TIME_CONST_IS_ZERO_OR_NEGATIVE");
     }
   }
@@ -209,7 +210,8 @@ void balanceOff()
     int set_balance_param_srv_result = set_balance_param_srv.response.result;
     if( set_balance_param_srv_result == thormang3_walking_module_msgs::SetBalanceParam::Response::NO_ERROR)
       ROS_INFO("[Demo]  : Succeed to set balance param");
-    else {
+    else
+    {
       if(set_balance_param_srv_result & thormang3_walking_module_msgs::SetBalanceParam::Response::NOT_ENABLED_WALKING_MODULE)
         ROS_ERROR("[Demo]  : BALANCE_PARAM_ERR::NOT_ENABLED_WALKING_MODULE");
       if(set_balance_param_srv_result & thormang3_walking_module_msgs::SetBalanceParam::Response::PREV_REQUEST_IS_NOT_FINISHED)
@@ -228,7 +230,21 @@ void walkForward()
 {
   thormang3_walking_module_msgs::GetReferenceStepData    get_ref_stp_data_srv;
   thormang3_walking_module_msgs::AddStepDataArray        add_stp_data_srv;
+  thormang3_walking_module_msgs::IsRunning               is_running_srv;
   thormang3_walking_module_msgs::StepData                stp_data_msg;
+
+  if(is_running_client.call(is_running_srv) == false)
+  {
+    ROS_ERROR("Failed to get walking_module status");
+  }
+  else
+  {
+    if(is_running_srv.response.is_running == true)
+    {
+      ROS_ERROR("[Demo]  : ROBOT_IS_WALKING_NOW");
+      return;
+    }
+  }
 
   if(get_ref_step_data_client.call(get_ref_stp_data_srv) == false)
     ROS_ERROR("Failed to get reference step data");
@@ -273,7 +289,8 @@ void walkForward()
     int add_stp_data_srv_result = add_stp_data_srv.response.result;
     if(add_stp_data_srv_result== thormang3_walking_module_msgs::AddStepDataArray::Response::NO_ERROR)
       ROS_INFO("[Demo]  : Succeed to add step data array");
-    else {
+    else
+    {
       ROS_ERROR("[Demo]  : Failed to add step data array");
       if(add_stp_data_srv_result & thormang3_walking_module_msgs::AddStepDataArray::Response::NOT_ENABLED_WALKING_MODULE)
         ROS_ERROR("[Demo]  : STEP_DATA_ERR::NOT_ENABLED_WALKING_MODULE");
@@ -295,7 +312,21 @@ void walkBackWard()
 {
   thormang3_walking_module_msgs::GetReferenceStepData    get_ref_stp_data_srv;
   thormang3_walking_module_msgs::AddStepDataArray        add_stp_data_srv;
+  thormang3_walking_module_msgs::IsRunning               is_running_srv;
   thormang3_walking_module_msgs::StepData                stp_data_msg;
+
+  if(is_running_client.call(is_running_srv) == false)
+  {
+    ROS_ERROR("Failed to get walking_module status");
+  }
+  else
+  {
+    if(is_running_srv.response.is_running == true)
+    {
+      ROS_ERROR("[Demo]  : ROBOT_IS_WALKING_NOW");
+      return;
+    }
+  }
 
   get_ref_step_data_client.call(get_ref_stp_data_srv);
 
@@ -340,18 +371,19 @@ void walkBackWard()
 
   if(add_step_data_array_client.call(add_stp_data_srv) == true)
   {
-    int _result = add_stp_data_srv.response.result;
-    if(_result== thormang3_walking_module_msgs::AddStepDataArray::Response::NO_ERROR)
+    int add_stp_data_srv_result = add_stp_data_srv.response.result;
+    if(add_stp_data_srv_result== thormang3_walking_module_msgs::AddStepDataArray::Response::NO_ERROR)
       ROS_INFO("[Demo]  : Succeed to add step data array");
-    else {
+    else
+    {
       ROS_ERROR("[Demo]  : Failed to add step data array");
-      if(_result & thormang3_walking_module_msgs::AddStepDataArray::Response::NOT_ENABLED_WALKING_MODULE)
+      if(add_stp_data_srv_result & thormang3_walking_module_msgs::AddStepDataArray::Response::NOT_ENABLED_WALKING_MODULE)
         ROS_ERROR("[Demo]  : STEP_DATA_ERR::NOT_ENABLED_WALKING_MODULE");
-      if(_result & thormang3_walking_module_msgs::AddStepDataArray::Response::PROBLEM_IN_POSITION_DATA)
+      if(add_stp_data_srv_result & thormang3_walking_module_msgs::AddStepDataArray::Response::PROBLEM_IN_POSITION_DATA)
         ROS_ERROR("[Demo]  : STEP_DATA_ERR::PROBLEM_IN_POSITION_DATA");
-      if(_result & thormang3_walking_module_msgs::AddStepDataArray::Response::PROBLEM_IN_TIME_DATA)
+      if(add_stp_data_srv_result & thormang3_walking_module_msgs::AddStepDataArray::Response::PROBLEM_IN_TIME_DATA)
         ROS_ERROR("[Demo]  : STEP_DATA_ERR::PROBLEM_IN_TIME_DATA");
-      if(_result & thormang3_walking_module_msgs::AddStepDataArray::Response::ROBOT_IS_WALKING_NOW)
+      if(add_stp_data_srv_result & thormang3_walking_module_msgs::AddStepDataArray::Response::ROBOT_IS_WALKING_NOW)
         ROS_ERROR("[Demo]  : STEP_DATA_ERR::ROBOT_IS_WALKING_NOW");
     }
   }

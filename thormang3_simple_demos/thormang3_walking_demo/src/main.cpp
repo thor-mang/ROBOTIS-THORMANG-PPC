@@ -41,10 +41,9 @@
 
 ros::Subscriber demo_command_sub;
 
-
 bool is_init_pose = false;
 
-void DemoCommandCallback(const std_msgs::String::ConstPtr& msg)
+void demoCommandCallback(const std_msgs::String::ConstPtr& msg)
 {
 
   ROS_INFO_STREAM("[Demo]  : receive [" << msg->data << "] msg " );
@@ -97,7 +96,7 @@ int main(int argc, char **argv)
   initialize();
 
   ros::NodeHandle nh;
-  demo_command_sub = nh.subscribe("/robotis/walking_demo/command", 10, DemoCommandCallback);
+  demo_command_sub = nh.subscribe("/robotis/walking_demo/command", 10, demoCommandCallback);
 
   ros::spin();
   return 0;
