@@ -37,22 +37,22 @@
 
 #include "thormang3_walking_demo/thormang3_walking_demo.h"
 
-ros::Publisher      wholebody_ini_pose_pub;
-ros::Publisher      enable_ctrl_module_pub;
+ros::Publisher      g_wholebody_ini_pose_pub;
+ros::Publisher      g_enable_ctrl_module_pub;
 
-ros::ServiceClient  get_ref_step_data_client;
-ros::ServiceClient  add_step_data_array_client;
-ros::ServiceClient  is_running_client;
-ros::ServiceClient  set_balance_param_client;
+ros::ServiceClient  g_get_ref_step_data_client;
+ros::ServiceClient  g_add_step_data_array_client;
+ros::ServiceClient  g_is_running_client;
+ros::ServiceClient  g_set_balance_param_client;
 
-ros::Subscriber     walking_module_status_msg_sub;
+ros::Subscriber     g_walking_module_status_msg_sub;
 
 
-double start_end_time = 2.0; //sec
-double step_time      = 1.0; //sec
-double step_length    = 0.1; //meter
-double body_z_swap    = 0.01; //meter
-double foot_z_swap    = 0.1; //meter
+double g_start_end_time = 2.0; //sec
+double g_step_time      = 1.0; //sec
+double g_step_length    = 0.1; //meter
+double g_body_z_swap    = 0.01; //meter
+double g_foot_z_swap    = 0.1; //meter
 
 
 void walkingModuleStatusMSGCallback(const robotis_controller_msgs::StatusMsg::ConstPtr &msg)
@@ -64,15 +64,15 @@ void initialize()
 {
   ros::NodeHandle nh;
 
-  wholebody_ini_pose_pub        = nh.advertise<std_msgs::String>("/robotis/base/ini_pose", 0);
-  enable_ctrl_module_pub        = nh.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 0);
+  g_wholebody_ini_pose_pub        = nh.advertise<std_msgs::String>("/robotis/base/ini_pose", 0);
+  g_enable_ctrl_module_pub        = nh.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 0);
 
-  get_ref_step_data_client      = nh.serviceClient<thormang3_walking_module_msgs::GetReferenceStepData>("/robotis/walking/get_reference_step_data");
-  add_step_data_array_client    = nh.serviceClient<thormang3_walking_module_msgs::AddStepDataArray>("/robotis/walking/add_step_data");
-  set_balance_param_client      = nh.serviceClient<thormang3_walking_module_msgs::SetBalanceParam>("/robotis/walking/set_balance_param");
-  is_running_client             = nh.serviceClient<thormang3_walking_module_msgs::IsRunning>("/robotis/walking/is_running");
+  g_get_ref_step_data_client      = nh.serviceClient<thormang3_walking_module_msgs::GetReferenceStepData>("/robotis/walking/get_reference_step_data");
+  g_add_step_data_array_client    = nh.serviceClient<thormang3_walking_module_msgs::AddStepDataArray>("/robotis/walking/add_step_data");
+  g_set_balance_param_client      = nh.serviceClient<thormang3_walking_module_msgs::SetBalanceParam>("/robotis/walking/set_balance_param");
+  g_is_running_client             = nh.serviceClient<thormang3_walking_module_msgs::IsRunning>("/robotis/walking/is_running");
 
-  walking_module_status_msg_sub = nh.subscribe("/robotis/status", 10, walkingModuleStatusMSGCallback);
+  g_walking_module_status_msg_sub = nh.subscribe("/robotis/status", 10, walkingModuleStatusMSGCallback);
 }
 
 
@@ -81,14 +81,14 @@ void moveToInitPose()
   std_msgs::String str_msg;
   str_msg.data = "ini_pose";
 
-  wholebody_ini_pose_pub.publish( str_msg );
+  g_wholebody_ini_pose_pub.publish( str_msg );
 }
 
 void setCtrlModule()
 {
   std_msgs::String set_ctrl_mode_msg;
   set_ctrl_mode_msg.data = "walking_module";
-  enable_ctrl_module_pub.publish( set_ctrl_mode_msg );
+  g_enable_ctrl_module_pub.publish( set_ctrl_mode_msg );
 }
 
 bool loadBalanceParam(thormang3_walking_module_msgs::SetBalanceParam& set_param)
@@ -151,7 +151,7 @@ bool loadBalanceParam(thormang3_walking_module_msgs::SetBalanceParam& set_param)
 }
 
 
-void balanceOn()
+void setBalanceOn()
 {
   thormang3_walking_module_msgs::SetBalanceParam set_balance_param_srv;
   set_balance_param_srv.request.updating_duration =  2.0*1.0; //sec
@@ -163,7 +163,7 @@ void balanceOn()
   }
 
 
-  if(set_balance_param_client.call(set_balance_param_srv) == true)
+  if(g_set_balance_param_client.call(set_balance_param_srv) == true)
   {
     int set_balance_param_srv_result = set_balance_param_srv.response.result;
     if( set_balance_param_srv_result == thormang3_walking_module_msgs::SetBalanceParam::Response::NO_ERROR)
@@ -184,7 +184,7 @@ void balanceOn()
   }
 }
 
-void balanceOff()
+void setBalanceOff()
 {
   thormang3_walking_module_msgs::SetBalanceParam set_balance_param_srv;
   set_balance_param_srv.request.updating_duration                             = 1.0; //sec
@@ -205,7 +205,7 @@ void balanceOff()
   set_balance_param_srv.request.balance_param.foot_roll_torque_gain   = 0;
   set_balance_param_srv.request.balance_param.foot_pitch_torque_gain  = 0;
 
-  if(set_balance_param_client.call(set_balance_param_srv) == true)
+  if(g_set_balance_param_client.call(set_balance_param_srv) == true)
   {
     int set_balance_param_srv_result = set_balance_param_srv.response.result;
     if( set_balance_param_srv_result == thormang3_walking_module_msgs::SetBalanceParam::Response::NO_ERROR)
@@ -233,7 +233,7 @@ void walkForward()
   thormang3_walking_module_msgs::IsRunning               is_running_srv;
   thormang3_walking_module_msgs::StepData                stp_data_msg;
 
-  if(is_running_client.call(is_running_srv) == false)
+  if(g_is_running_client.call(is_running_srv) == false)
   {
     ROS_ERROR("Failed to get walking_module status");
   }
@@ -246,36 +246,36 @@ void walkForward()
     }
   }
 
-  if(get_ref_step_data_client.call(get_ref_stp_data_srv) == false)
+  if(g_get_ref_step_data_client.call(get_ref_stp_data_srv) == false)
     ROS_ERROR("Failed to get reference step data");
 
   stp_data_msg = get_ref_stp_data_srv.response.reference_step_data;
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING_STARTING;
   stp_data_msg.time_data.dsp_ratio = 0.2;
-  stp_data_msg.time_data.abs_step_time += start_end_time;
+  stp_data_msg.time_data.abs_step_time += g_start_end_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::STANDING;
   stp_data_msg.position_data.body_z_swap = 0;
   add_stp_data_srv.request.step_data_array.push_back(stp_data_msg);
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING;
-  stp_data_msg.time_data.abs_step_time += step_time;
+  stp_data_msg.time_data.abs_step_time += g_step_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
-  stp_data_msg.position_data.body_z_swap = body_z_swap;
-  stp_data_msg.position_data.foot_z_swap = foot_z_swap;
-  stp_data_msg.position_data.right_foot_pose.x += step_length;
+  stp_data_msg.position_data.body_z_swap = g_body_z_swap;
+  stp_data_msg.position_data.foot_z_swap = g_foot_z_swap;
+  stp_data_msg.position_data.right_foot_pose.x += g_step_length;
   add_stp_data_srv.request.step_data_array.push_back(stp_data_msg);
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING;
-  stp_data_msg.time_data.abs_step_time += step_time;
+  stp_data_msg.time_data.abs_step_time += g_step_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING;
-  stp_data_msg.position_data.body_z_swap = body_z_swap;
-  stp_data_msg.position_data.foot_z_swap = foot_z_swap;
-  stp_data_msg.position_data.left_foot_pose.x += step_length;
+  stp_data_msg.position_data.body_z_swap = g_body_z_swap;
+  stp_data_msg.position_data.foot_z_swap = g_foot_z_swap;
+  stp_data_msg.position_data.left_foot_pose.x += g_step_length;
   add_stp_data_srv.request.step_data_array.push_back(stp_data_msg);
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
-  stp_data_msg.time_data.abs_step_time += start_end_time;
+  stp_data_msg.time_data.abs_step_time += g_start_end_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::STANDING;
   stp_data_msg.position_data.body_z_swap = 0;
   stp_data_msg.position_data.foot_z_swap = 0;
@@ -284,7 +284,7 @@ void walkForward()
   add_stp_data_srv.request.auto_start = true;
   add_stp_data_srv.request.remove_existing_step_data = true;
 
-  if(add_step_data_array_client.call(add_stp_data_srv) == true)
+  if(g_add_step_data_array_client.call(add_stp_data_srv) == true)
   {
     int add_stp_data_srv_result = add_stp_data_srv.response.result;
     if(add_stp_data_srv_result== thormang3_walking_module_msgs::AddStepDataArray::Response::NO_ERROR)
@@ -308,14 +308,14 @@ void walkForward()
   }
 }
 
-void walkBackWard()
+void walkBackward()
 {
   thormang3_walking_module_msgs::GetReferenceStepData    get_ref_stp_data_srv;
   thormang3_walking_module_msgs::AddStepDataArray        add_stp_data_srv;
   thormang3_walking_module_msgs::IsRunning               is_running_srv;
   thormang3_walking_module_msgs::StepData                stp_data_msg;
 
-  if(is_running_client.call(is_running_srv) == false)
+  if(g_is_running_client.call(is_running_srv) == false)
   {
     ROS_ERROR("Failed to get walking_module status");
   }
@@ -328,38 +328,38 @@ void walkBackWard()
     }
   }
 
-  get_ref_step_data_client.call(get_ref_stp_data_srv);
+  g_get_ref_step_data_client.call(get_ref_stp_data_srv);
 
   stp_data_msg = get_ref_stp_data_srv.response.reference_step_data;
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING_STARTING;
   stp_data_msg.time_data.dsp_ratio = 0.2;
-  stp_data_msg.time_data.abs_step_time += start_end_time;
+  stp_data_msg.time_data.abs_step_time += g_start_end_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::STANDING;
   stp_data_msg.position_data.body_z_swap = 0;
   add_stp_data_srv.request.step_data_array.push_back(stp_data_msg);
 
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING;
-  stp_data_msg.time_data.abs_step_time += step_time;
+  stp_data_msg.time_data.abs_step_time += g_step_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
-  stp_data_msg.position_data.body_z_swap = body_z_swap;
-  stp_data_msg.position_data.foot_z_swap = foot_z_swap;
-  stp_data_msg.position_data.right_foot_pose.x -= step_length;
+  stp_data_msg.position_data.body_z_swap = g_body_z_swap;
+  stp_data_msg.position_data.foot_z_swap = g_foot_z_swap;
+  stp_data_msg.position_data.right_foot_pose.x -= g_step_length;
   add_stp_data_srv.request.step_data_array.push_back(stp_data_msg);
 
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING;
-  stp_data_msg.time_data.abs_step_time += step_time;
+  stp_data_msg.time_data.abs_step_time += g_step_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING;
-  stp_data_msg.position_data.body_z_swap = body_z_swap;
-  stp_data_msg.position_data.foot_z_swap = foot_z_swap;
-  stp_data_msg.position_data.left_foot_pose.x -= step_length;
+  stp_data_msg.position_data.body_z_swap = g_body_z_swap;
+  stp_data_msg.position_data.foot_z_swap = g_foot_z_swap;
+  stp_data_msg.position_data.left_foot_pose.x -= g_step_length;
   add_stp_data_srv.request.step_data_array.push_back(stp_data_msg);
 
 
   stp_data_msg.time_data.walking_state = thormang3_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
-  stp_data_msg.time_data.abs_step_time += start_end_time;
+  stp_data_msg.time_data.abs_step_time += g_start_end_time;
   stp_data_msg.position_data.moving_foot = thormang3_walking_module_msgs::StepPositionData::STANDING;
   stp_data_msg.position_data.body_z_swap = 0;
   stp_data_msg.position_data.foot_z_swap = 0;
@@ -369,7 +369,7 @@ void walkBackWard()
   add_stp_data_srv.request.auto_start = true;
   add_stp_data_srv.request.remove_existing_step_data = true;
 
-  if(add_step_data_array_client.call(add_stp_data_srv) == true)
+  if(g_add_step_data_array_client.call(add_stp_data_srv) == true)
   {
     int add_stp_data_srv_result = add_stp_data_srv.response.result;
     if(add_stp_data_srv_result== thormang3_walking_module_msgs::AddStepDataArray::Response::NO_ERROR)

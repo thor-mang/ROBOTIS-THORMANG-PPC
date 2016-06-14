@@ -39,7 +39,7 @@
 
 #include "thormang3_walking_demo/thormang3_walking_demo.h"
 
-ros::Subscriber demo_command_sub;
+ros::Subscriber g_demo_command_sub;
 
 bool is_init_pose = false;
 
@@ -68,17 +68,17 @@ void demoCommandCallback(const std_msgs::String::ConstPtr& msg)
   else if( msg->data == "backward" )
   {
     ROS_INFO("demo 5: backward walking");
-    walkBackWard();
+    walkBackward();
   }
   else if( msg->data == "balance_on" )
   {
     ROS_INFO("demo 3: balance enable");
-    balanceOn();
+    setBalanceOn();
   }
   else if( msg->data == "balance_off" )
   {
     ROS_INFO("demo 3: balance disable");
-    balanceOff();
+    setBalanceOff();
   }
   else {
     ROS_ERROR("Invalid Command!!!");
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
   initialize();
 
   ros::NodeHandle nh;
-  demo_command_sub = nh.subscribe("/robotis/walking_demo/command", 10, demoCommandCallback);
+  g_demo_command_sub = nh.subscribe("/robotis/walking_demo/command", 10, demoCommandCallback);
 
   ros::spin();
   return 0;

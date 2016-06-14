@@ -61,11 +61,11 @@ void moveToInitPose();
 
 void setCtrlModule();
 
-void balanceOn();
-void balanceOff();
+void setBalanceOn();
+void setBalanceOff();
 
 void walkForward();
-void walkBackWard();
+void walkBackward();
 
 
 #endif /* THORMANG3_WALKING_DEMO_THORMANG3_WALKING_DEMO_H_ */
