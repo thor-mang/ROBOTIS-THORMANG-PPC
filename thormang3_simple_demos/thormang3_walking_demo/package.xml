@@ -2,7 +2,10 @@
 <package>
   <name>thormang3_walking_demo</name>
   <version>0.1.0</version>
-  <description>The thormang3_walking_demo package</description>
+  <description>
+    The thormang3_walking_demo package
+    This package describes how to use thormang3_walking_module.      
+  </description>
 
   <maintainer email="hjsong@robotis.com">ROBOTIS</maintainer>
 
