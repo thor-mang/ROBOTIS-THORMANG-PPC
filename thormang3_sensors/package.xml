@@ -1,12 +1,16 @@
 <?xml version="1.0"?>
 <package>
   <name>thormang3_sensors</name>
-  <version>0.0.2</version>
-  <description>The thor_lidar package</description>
+  <version>0.1.1</version>
+  <description>
+    Thormang3 sensor related package.
+    This package contains sensor related launch files.
+    The package also includes a node for assembling Laserscan(LaserScan to PointCloud)
+  </description>
 
   <maintainer email="kmjung@robotis.com">kayman</maintainer>
-
   <license>BSD</license>
+  <author email="kmjung@robotis.com">kayman</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
