@@ -1,27 +1,24 @@
 <?xml version="1.0"?>
 <package>
   <name>thormang3_sensors</name>
-  <version>0.1.1</version>
+  <version>0.1.0</version>
   <description>
-    Thormang3 sensor related package.
     This package contains sensor related launch files.
     The package also includes a node for assembling Laserscan(LaserScan to PointCloud)
   </description>
-
-  <maintainer email="kmjung@robotis.com">kayman</maintainer>
   <license>BSD</license>
-  <author email="kmjung@robotis.com">kayman</author>
-
+  <author email="kmjung@robotis.com">Kayman</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-PPC/issues</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-PPC</url>
+  <url type="website">http://wiki.ros.org/thormang3_ppc</url>
   <buildtool_depend>catkin</buildtool_depend>
-
   <build_depend>roscpp</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>laser_assembler</build_depend>
   <build_depend>pcl_ros</build_depend>
-  
   <run_depend>roscpp</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>laser_assembler</run_depend>
   <run_depend>pcl_ros</run_depend>
-
 </package>
