@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(thormang3_walking_demo)
 
-
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslib
@@ -9,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   robotis_controller_msgs
   thormang3_walking_module_msgs
 )
-
 
 catkin_package(
   INCLUDE_DIRS include
@@ -23,12 +21,10 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-
 add_executable(thormang3_walking_demo_node
    src/thormang3_walking_demo.cpp
    src/main.cpp
 )
-
 
 target_link_libraries(thormang3_walking_demo_node
   yaml-cpp
