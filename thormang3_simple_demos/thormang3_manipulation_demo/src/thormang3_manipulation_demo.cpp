@@ -124,7 +124,7 @@ int main(int argc, char **argv)
   ros::NodeHandle nh("~");
 
   g_base_ini_pose_pub       = nh.advertise<std_msgs::String>("/robotis/base/ini_pose", 0);
-  g_enable_ctrl_module_pub  = nh.advertise<robotis_controller_msgs::JointCtrlModule>("/robotis/set_ctrl_module", 0);
+  g_enable_ctrl_module_pub  = nh.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 0);
   g_kinematics_msg_pub      = nh.advertise<thormang3_manipulation_module_msgs::KinematicsPose>("/robotis/manipulation/kinematics_pose_msg", 0);
   g_manipulation_ini_pose_pub = nh.advertise<std_msgs::String>("/robotis/manipulation/ini_pose_msg", 0);
 
