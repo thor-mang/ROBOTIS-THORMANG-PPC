@@ -23,6 +23,8 @@ add_executable(thormang3_manipulation_demo
 	src/thormang3_manipulation_demo.cpp
 )
 
+add_dependencies(thormang3_manipulation_demo ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(thormang3_manipulation_demo
   ${catkin_LIBRARIES}
 )

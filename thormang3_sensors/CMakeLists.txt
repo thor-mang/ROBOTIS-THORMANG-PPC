@@ -33,6 +33,8 @@ add_definitions(
 
 add_executable(assemble_laser_node src/assemble_laser.cpp)
 
+add_dependencies(assemble_laser_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(assemble_laser_node
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}

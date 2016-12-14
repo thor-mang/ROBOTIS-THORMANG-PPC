@@ -21,12 +21,14 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(thormang3_walking_demo_node
+add_executable(thormang3_walking_demo
    src/thormang3_walking_demo.cpp
    src/main.cpp
 )
 
-target_link_libraries(thormang3_walking_demo_node
+add_dependencies(thormang3_walking_demo ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(thormang3_walking_demo
   yaml-cpp
   ${catkin_LIBRARIES}
 )
