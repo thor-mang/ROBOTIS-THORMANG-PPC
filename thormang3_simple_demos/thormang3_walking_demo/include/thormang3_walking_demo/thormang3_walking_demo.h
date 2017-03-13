@@ -51,6 +51,7 @@
 #include "thormang3_walking_module_msgs/AddStepDataArray.h"
 #include "thormang3_walking_module_msgs/StartWalking.h"
 #include "thormang3_walking_module_msgs/SetBalanceParam.h"
+#include "thormang3_walking_module_msgs/SetJointFeedBackGain.h"
 #include "thormang3_walking_module_msgs/IsRunning.h"
 #include "thormang3_walking_module_msgs/RemoveExistingStepData.h"
 
@@ -61,6 +62,8 @@ void moveToInitPose();
 
 void setCtrlModule();
 
+bool loadBalanceParam(thormang3_walking_module_msgs::SetBalanceParam& set_param);
+bool loadFeedBackGain(thormang3_walking_module_msgs::SetJointFeedBackGain& set_gain);
 void setBalanceOn();
 void setBalanceOff();
 
