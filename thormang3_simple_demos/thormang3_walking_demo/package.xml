@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <package>
   <name>thormang3_walking_demo</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>
     The thormang3_walking_demo package
     This package describes how to use thormang3_walking_module.
   </description>
   <license>BSD</license>
+  <author email="zerom@robotis.com">Zerom</author>
   <author email="hjsong@robotis.com">Jay Song</author>
+  <author email="sch@robotis.com">SCH</author>
+  <author email="kmjung@robotis.com">Kayman</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-PPC/issues</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-PPC</url>

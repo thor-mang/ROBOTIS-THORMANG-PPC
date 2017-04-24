@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
 <package>
   <name>thormang3_sensors</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>
     This package contains sensor related launch files.
     The package also includes a node for assembling Laserscan(LaserScan to PointCloud)
   </description>
   <license>BSD</license>
+  <author email="zerom@robotis.com">Zerom</author>
+  <author email="hjsong@robotis.com">Jay Song</author>
+  <author email="sch@robotis.com">SCH</author>
   <author email="kmjung@robotis.com">Kayman</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-PPC/issues</url>
