@@ -36,9 +36,7 @@
  */
 
 #include <ros/ros.h>
-
 #include <std_msgs/String.h>
-
 #include <pthread.h>
 
 #include "robotis_controller_msgs/JointCtrlModule.h"
@@ -123,9 +121,9 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "manipulation_demo_publisher");
   ros::NodeHandle nh("~");
 
-  g_base_ini_pose_pub       = nh.advertise<std_msgs::String>("/robotis/base/ini_pose", 0);
-  g_enable_ctrl_module_pub  = nh.advertise<robotis_controller_msgs::JointCtrlModule>("/robotis/set_ctrl_module", 0);
-  g_kinematics_msg_pub      = nh.advertise<thormang3_manipulation_module_msgs::KinematicsPose>("/robotis/manipulation/kinematics_pose_msg", 0);
+  g_base_ini_pose_pub         = nh.advertise<std_msgs::String>("/robotis/base/ini_pose", 0);
+  g_enable_ctrl_module_pub    = nh.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 0);
+  g_kinematics_msg_pub        = nh.advertise<thormang3_manipulation_module_msgs::KinematicsPose>("/robotis/manipulation/kinematics_pose_msg", 0);
   g_manipulation_ini_pose_pub = nh.advertise<std_msgs::String>("/robotis/manipulation/ini_pose_msg", 0);
 
   ros::Subscriber demo_command_sub = nh.subscribe("/robotis/manipulation_demo/command", 5, demoCommandCallback);
