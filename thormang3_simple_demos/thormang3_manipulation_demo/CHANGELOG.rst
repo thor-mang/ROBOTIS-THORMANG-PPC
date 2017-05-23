@@ -2,6 +2,11 @@
 Changelog for package thormang3_manipulation_demo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.2 (2017-05-23)
+------------
+* updated cmake file for ros install
+* Contributors: SCH
+
 0.1.1 (2017-04-24)
 -----------
 * added dependencies
